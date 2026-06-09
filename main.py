@@ -11,7 +11,8 @@ NOTIFIED = set()
 
 def send_message(text):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-    requests.post(url, data={"chat_id": CHAT_ID, "text": text, "parse_mode": "HTML"})
+    res = requests.post(url, data={"chat_id": CHAT_ID, "text": text, "parse_mode": "HTML"})
+    print(f"Telegram response: {res.status_code} {res.text}")
 
 def get_events():
     import xml.etree.ElementTree as ET
@@ -41,8 +42,9 @@ def check_and_notify():
     now = datetime.now(THAI_TZ)
     try:
         events = get_events()
+        print(f"Found {len(events)} high impact USD events")
     except Exception as ex:
-        print(f"Error: {ex}")
+        print(f"Error getting events: {ex}")
         return
     for title, dt, forecast, previous in events:
         diff = (dt - now).total_seconds()
@@ -60,6 +62,8 @@ def check_and_notify():
             NOTIFIED.add(key)
 
 if __name__ == "__main__":
+    print(f"BOT_TOKEN set: {bool(BOT_TOKEN)}")
+    print(f"CHAT_ID set: {bool(CHAT_ID)}")
     send_message("Bot เริ่มทำงานแล้ว!")
     while True:
         check_and_notify()
