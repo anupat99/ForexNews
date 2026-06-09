@@ -1,5 +1,4 @@
 import requests
-import xml.etree.ElementTree as ET
 from datetime import datetime
 import pytz
 import time
@@ -15,9 +14,11 @@ def send_message(text):
     requests.post(url, data={"chat_id": CHAT_ID, "text": text, "parse_mode": "HTML"})
 
 def get_events():
+    import xml.etree.ElementTree as ET
     url = "https://nfs.faireconomy.media/ff_calendar_thisweek.xml"
     res = requests.get(url, timeout=10)
-    root = ET.fromstring(res.content)
+    text = res.text.replace("&", "&amp;")
+    root = ET.fromstring(text)
     events = []
     for e in root.findall("event"):
         impact = e.findtext("impact", "")
