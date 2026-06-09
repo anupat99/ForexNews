@@ -1,6 +1,6 @@
 import requests
 import xml.etree.ElementTree as ET
-from datetime import datetime, timedelta
+from datetime import datetime
 import pytz
 import time
 import os
@@ -49,4 +49,17 @@ def check_and_notify():
         if 0 < diff <= 1800 and key not in NOTIFIED:
             mins = int(diff // 60)
             msg = (
-                f"⚠️ <b>ข่
+                f"[!] <b>ข่าว Forex ใน {mins} นาที!</b>\n\n"
+                f"[*] {title}\n"
+                f"เวลา: {dt.strftime('%H:%M')} น.\n"
+                f"Forecast: {forecast}\n"
+                f"Previous: {previous}"
+            )
+            send_message(msg)
+            NOTIFIED.add(key)
+
+if __name__ == "__main__":
+    send_message("Bot เริ่มทำงานแล้ว!")
+    while True:
+        check_and_notify()
+        time.sleep(60)
